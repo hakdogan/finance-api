@@ -7,13 +7,15 @@ This API developed with Quarkus picocli extension. [Picocli](https://picocli.inf
 
 ## Command Line Usage
 ```shell script
-#jvm mode
-java -jar target/quarkus-run.jar USD
+# jvm mode
+# mvn clean package
+java -jar target/quarkus-app/quarkus-run.jar USD
 
 USD {"Alış":"27,7558","Tür":"Döviz","Satış":"27,7727","Değişim":"%0,14"}
 
-#native mode
-./finance-api-runner altin
+# native mode
+# mvn clean package -Pnative
+./target/finance-api-runner altin
 
 gram-altin {"Alış":"1.722,53","Tür":"Altın","Satış":"1.722,80","Değişim":"%3,39"}
 ceyrek-altin {"Alış":"2.839,50","Tür":"Altın","Satış":"2.904,94","Değişim":"%1,54"}
