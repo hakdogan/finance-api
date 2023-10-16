@@ -16,12 +16,23 @@ public class FinanceAPITest
     @Test
     @Launch(value = "USD")
     public void usdCurrencyTest(LaunchResult result) {
+        if(isAccessDenied(result)){
+            return;
+        }
         Assertions.assertTrue(result.getOutput().contains("USD"));
     }
 
     @Test
     @Launch(value = "EUR")
     public void euroCurrencyTest(LaunchResult result) {
+        if(isAccessDenied(result)){
+            return;
+        }
         Assertions.assertTrue(result.getOutput().contains("EUR"));
+    }
+
+    private boolean isAccessDenied(LaunchResult result){
+        //skip test when access denied
+        return FinanceAPI.ACCESS_DENIED.equals(result.getOutput());
     }
 }

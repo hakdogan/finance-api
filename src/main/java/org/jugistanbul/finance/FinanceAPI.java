@@ -1,6 +1,7 @@
 package org.jugistanbul.finance;
 
 import io.vertx.core.json.JsonObject;
+
 import java.util.List;
 import java.util.Map;
 
@@ -12,34 +13,41 @@ import static picocli.CommandLine.Parameters;
  * Created on 14.10.2023
  ***/
 @Command(name = "finance-api", mixinStandardHelpOptions = true,
-         description         = "Finance API returns the rates of currency or precious metal type that matches the passed name to it from a public service.",
-         version             = "Finance API version 1.0",
-         footer              = "Copyright (c) 2021")
-public class FinanceAPI implements Runnable
-{
+        description = "Finance API returns the rates of currency or precious metal type that matches the passed name to it from a public service.",
+        version = "Finance API version 1.0",
+        footer = "Copyright (c) 2021")
+public class FinanceAPI implements Runnable {
 
-   @Parameters(description = "Currency or precious metal name is mandatory")
-   String name;
+    public static final String ACCESS_DENIED = "Access denied by service!";
 
-   @Override
-   public void run() {
+    @Parameters(description = "Currency or precious metal name is mandatory")
+    String name;
 
-       String response = RateClient.query();
-       var responseBody = new JsonObject(response);
+    @Override
+    public void run() {
 
-       List<Map.Entry<String, Object>> list = responseBody
-               .stream().filter(p -> p.getKey().contains(name))
-               .toList();
+        RateClient.ResponseWrapper responseWrapper = RateClient.query();
 
-       if(list.isEmpty()){
-           System.out.printf("%s not found!%n", name);
-           return;
-       }
+        if (responseWrapper.statusCode() != 200) {
+            System.out.println(ACCESS_DENIED);
+            return;
+        }
 
-       list.forEach(this::print);
+        var responseBody = new JsonObject(responseWrapper.response());
+
+        List<Map.Entry<String, Object>> list = responseBody
+                .stream().filter(p -> p.getKey().contains(name))
+                .toList();
+
+        if (list.isEmpty()) {
+            System.out.printf("%s not found!%n", name);
+            return;
+        }
+
+        list.forEach(this::print);
     }
 
-    private void print(final Map.Entry<String, Object> entry){
+    private void print(final Map.Entry<String, Object> entry) {
         System.out.printf("%s %s%n", entry.getKey(), entry.getValue());
     }
 }

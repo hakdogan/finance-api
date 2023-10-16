@@ -13,11 +13,14 @@ import java.net.http.HttpResponse;
  ***/
 public class RateClient
 {
+
+    record ResponseWrapper(int statusCode, String response){}
+
     private static final String SERVICE_URL = "https://finans.truncgil.com/today.json";
 
     private RateClient(){}
 
-    public static String query(){
+    public static ResponseWrapper query(){
 
         try {
 
@@ -31,7 +34,7 @@ public class RateClient
                     .build()
                     .send(request, HttpResponse.BodyHandlers.ofString());
 
-            return response.body();
+            return new ResponseWrapper(response.statusCode(), response.body());
 
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
